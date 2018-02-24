@@ -30,11 +30,27 @@ namespace SimpleBot
         {
             using (var conn = new SqlConnection(_connectionstring))
             {
+                UserProfile usr = new UserProfile();
                 var cmd = new SqlCommand("SELECT * FROM tbUsuarios where Id = @id", conn);
                 conn.Open();
                 cmd.Parameters.AddWithValue("@id", userProfile.Id);
                 cmd.ExecuteNonQuery();
-                return 
+
+                using (SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    if (reader.HasRows)
+                    {
+                        while (reader.Read())
+                        {
+                            usr = new UserProfile
+                            {
+                                Id = reader.GetString(0),
+                                Visitas = reader.GetInt32(1)
+                            };
+                        }
+                    }
+                }
+                return usr;
             }
         }
 
