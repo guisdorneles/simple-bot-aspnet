@@ -26,28 +26,25 @@ namespace SimpleBot
         }
 
 
-        public UserProfile BuscarUsuario(UserProfile userProfile)
+        public UserProfile BuscarUsuario(string id)
         {
             using (var conn = new SqlConnection(_connectionstring))
             {
                 UserProfile usr = new UserProfile();
                 var cmd = new SqlCommand("SELECT * FROM tbUsuarios where Id = @id", conn);
                 conn.Open();
-                cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                cmd.Parameters.AddWithValue("@id", id);
                 cmd.ExecuteNonQuery();
 
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
-                    if (reader.HasRows)
+                    while (reader.Read())
                     {
-                        while (reader.Read())
+                        usr = new UserProfile
                         {
-                            usr = new UserProfile
-                            {
-                                Id = reader.GetString(0),
-                                Visitas = reader.GetInt32(1)
-                            };
-                        }
+                            Id = reader.GetString(0),
+                            Visitas = reader.GetInt32(1)
+                        };
                     }
                 }
                 return usr;
@@ -57,14 +54,14 @@ namespace SimpleBot
 
 
 
-        public void AtualizarUsuario(UserProfile userProfile)
+        public void AtualizarUsuario(UserProfile userProfile, string id)
         {
             using (var conn = new SqlConnection(_connectionstring))
             {
                 var cmd = new SqlCommand("UPDATE tbUsuarios SET visitas = @visitas WHERE Id = @id", conn);
                 conn.Open();
                 cmd.Parameters.AddWithValue("@visistas", userProfile.Visitas);
-                cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                cmd.Parameters.AddWithValue("@id", id);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -74,10 +71,13 @@ namespace SimpleBot
         {
             using (var conn = new SqlConnection(_connectionstring))
             {
-                var cmd = new SqlCommand("INSERT ...", conn);
+                var cmd = new SqlCommand("INSERT tbMensagens VALUES( @UserName, @texto)", conn);
                 conn.Open();
+                cmd.Parameters.AddWithValue("@UserName", message.User);
+                cmd.Parameters.AddWithValue("@texto", message.Text);
                 cmd.ExecuteNonQuery();
             }
         }
+
     }
 }

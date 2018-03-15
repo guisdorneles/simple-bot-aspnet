@@ -10,8 +10,8 @@ namespace SimpleBot
     {
         void SalvaHistorico(Message message);
         void InserirUsuario(UserProfile userProfile);
-        void AtualizarUsuario(UserProfile userProfile);
-        void BuscarUsuario(UserProfile userProfile);
+        void AtualizarUsuario(UserProfile userProfile, string id);
+        UserProfile BuscarUsuario(string id);
 
     }
 }
